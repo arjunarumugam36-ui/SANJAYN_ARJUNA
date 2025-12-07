@@ -1,20 +1,51 @@
 import pygame,random
-pygame.init();W,H=200,400
-s=pygame.display.set_mode((W,H));clock=pygame.time.Clock()
-grid=[[0]*10 for _ in range(20)]
-x,y=4,0;shape=[(0,0),(1,0),(0,1),(1,1)]
-
-run=True
-while run:
-    clock.tick(5);s.fill((0,0,0))
-    for e in pygame.event.get():
-        if e.type==pygame.QUIT:run=False
-        if e.type==pygame.KEYDOWN:
-            if e.key==pygame.K_LEFT:x-=1
-            if e.key==pygame.K_RIGHT:x+=1
-    y+=1
-    if y>18:x,y=4,0
-    for px,py in shape:
-        pygame.draw.rect(s,(255,0,0),((x+px)*20,(y+py)*20,20,20))
-    pygame.display.update()
-pygame.quit()
+WIDTH, HEIGHT= 800, 600
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+class Game:
+    def __init__(self):
+        pygame.init()
+        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        self.clock = pygame.time.Clock()
+        self.pattern = []
+        self.player_pattern = []
+        self.score = 0
+    def generate_pattern(self):
+        self.pattern.append(random.choice([1, 2, 3, 4]))
+    def draw_pattern(self):
+        self.screen.fill(BLACK)
+        font = pygame.font.Font(None, 36)
+        text = font.render(f"Score: {self.score}", True, WHITE)
+        self.screen.blit(text, (10, 10))
+        for i, color in enumerate(self.pattern):
+            pygame.draw.rect(self.screen, [WHITE, (255, 0, 0), (0, 255, 0), (0, 0, 255)][color], (i * 100 + 100, HEIGHT // 2, 50, 50))
+        pygame.display.flip()
+    def play(self):
+        self.generate_pattern()
+        running = True
+        while running:
+            self.clock.tick(60)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    x = event.pos[0]
+                    if x < 200:
+                        self.player_pattern.append(1)
+                    elif x < 300:
+                        self.player_pattern.append(2)
+                    elif x < 400:
+                        self.player_pattern.append(3)
+                    else:
+                        self.player_pattern.append(4)
+                    if self.player_pattern != self.pattern[:len(self.player_pattern)]:
+                        running = False
+                    elif len(self.player_pattern) == len(self.pattern):
+                        self.score += 1
+                        self.player_pattern = []
+                        self.generate_pattern()
+            self.draw_pattern()
+        pygame.quit()
+if __name__ == "__main__":
+    game = Game()
+    game.play()
