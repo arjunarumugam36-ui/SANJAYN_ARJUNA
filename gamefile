@@ -1,1 +1,20 @@
+import pygame,random
+pygame.init();W,H=200,400
+s=pygame.display.set_mode((W,H));clock=pygame.time.Clock()
+grid=[[0]*10 for _ in range(20)]
+x,y=4,0;shape=[(0,0),(1,0),(0,1),(1,1)]
 
+run=True
+while run:
+    clock.tick(5);s.fill((0,0,0))
+    for e in pygame.event.get():
+        if e.type==pygame.QUIT:run=False
+        if e.type==pygame.KEYDOWN:
+            if e.key==pygame.K_LEFT:x-=1
+            if e.key==pygame.K_RIGHT:x+=1
+    y+=1
+    if y>18:x,y=4,0
+    for px,py in shape:
+        pygame.draw.rect(s,(255,0,0),((x+px)*20,(y+py)*20,20,20))
+    pygame.display.update()
+pygame.quit()
